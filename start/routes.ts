@@ -42,4 +42,13 @@ Route.group(() => {
     .prefix('event')
     .middleware('auth')
 
+  Route.group(() => {
+    Route.get('/', 'BrandsController.index')
+    Route.get('/:id', 'BrandsController.show')
+    Route.post('/create', 'BrandsController.create')
+    Route.put('/:id', 'BrandsController.update')
+    Route.delete('/:id', 'BrandsController.delete')
+  })
+    .prefix('brand')
+
 }).prefix('api')
