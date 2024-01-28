@@ -63,4 +63,15 @@ export default class ProductsController {
       message: 'product updated'
     }
   }
+
+  public async delete({ params }: HttpContextContract) {
+    const id = params.id
+    const currentProduct = await Product.findOrFail(id)
+
+    await currentProduct.delete()
+
+    return {
+      message: 'product deleted'
+    }
+  }
 }

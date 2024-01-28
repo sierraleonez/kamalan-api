@@ -26,29 +26,40 @@ Route.group(() => {
     Route.post('/create', 'UserController.create')
     Route.post('/login', 'UserController.login')
     Route.post('/logout', 'UserController.logout')
-  })
-    .prefix('user')
+  }).prefix('user')
 
   Route.get('/', 'RegistryController.index')
 
   // Event
   Route.group(() => {
     Route.get('/', 'EventsController.index')
-    Route.post('/create', 'EventsController.create')
     Route.get('/:id', 'EventsController.show')
-    Route.put('/:id', 'EventsController.update')
-    Route.delete('/:id', 'EventsController.delete')
-  })
-    .prefix('event')
-    .middleware('auth')
+    Route.group(() => {
+      Route.post('/create', 'EventsController.create')
+      Route.put('/:id', 'EventsController.update')
+      Route.delete('/:id', 'EventsController.delete')
+    }).middleware('auth')
+  }).prefix('event')
 
+  // Brand
   Route.group(() => {
     Route.get('/', 'BrandsController.index')
     Route.get('/:id', 'BrandsController.show')
-    Route.post('/create', 'BrandsController.create')
-    Route.put('/:id', 'BrandsController.update')
-    Route.delete('/:id', 'BrandsController.delete')
-  })
-    .prefix('brand')
+    Route.group(() => {
+      Route.post('/create', 'BrandsController.create')
+      Route.put('/:id', 'BrandsController.update')
+      Route.delete('/:id', 'BrandsController.delete')
+    }).middleware('auth')
+  }).prefix('brand')
 
+  // Product
+  Route.group(() => {
+    Route.get('/', 'ProductsController.index')
+    Route.get('/:id', 'ProductsController.show')
+    Route.group(() => {
+      Route.post('/create', 'ProductsController.create')
+      Route.put('/:id', 'ProductsController.update')
+      Route.delete('/:id', 'ProductsController.delete')
+    }).middleware('auth')
+  }).prefix('product')
 }).prefix('api')
