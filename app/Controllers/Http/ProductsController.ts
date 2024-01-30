@@ -1,6 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-
 import Product from "App/Models/Product";
+
 
 export default class ProductsController {
   public async index() {
@@ -16,6 +16,9 @@ export default class ProductsController {
   public async show({ params }: HttpContextContract) {
     const id = params.id
     const product = await Product.findOrFail(id)
+    await product.load('images')
+    await product.load('productVariations')
+
     return {
       message: 'product retrieved',
       data: {

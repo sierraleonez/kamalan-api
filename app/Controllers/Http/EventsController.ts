@@ -44,7 +44,6 @@ export default class EventsController {
     const name = request.input('name')
     const asset_url = request.input('asset_url')
     const include_on = request.input('include_on')
-    console.log(asset_url, include_on)
     const eventInstance = await Event.findOrFail(event_id)
     await eventInstance.merge({ name, asset_url, include_on }).save()
 

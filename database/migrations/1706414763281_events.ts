@@ -7,7 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
       table.string('name').notNullable()
-      table.enum('include_on', ['REGISTRY', 'GIFT', 'BOTH'], { enumName: 'INCLUDE_ON', useNative: true })
+      table.enum('include_on', ['REGISTRY', 'GIFT', 'BOTH'], { enumName: 'INCLUDE_ON', useNative: false })
       table.string('asset_url').notNullable()
 
       /**

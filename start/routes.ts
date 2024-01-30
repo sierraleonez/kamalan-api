@@ -62,4 +62,26 @@ Route.group(() => {
       Route.delete('/:id', 'ProductsController.delete')
     }).middleware('auth')
   }).prefix('product')
+
+  // Product Variation
+  Route.group(() => {
+    Route.get('/', 'ProductVariationsController.index')
+    Route.get('/:id', 'ProductVariationsController.show')
+    Route.group(() => {
+      Route.post('/create', 'ProductVariationsController.create')
+      Route.put('/:id', 'ProductVariationsController.update')
+      Route.delete('/:id', 'ProductVariationsController.delete')
+    }).middleware('auth')
+  }).prefix('product-variation')
+
+  // Product Variation Image
+  Route.group(() => {
+    Route.get('/', 'ProductVariationImagesController.index')
+    Route.get('/:id', 'ProductVariationImagesController.show')
+    Route.group(() => {
+      Route.post('/create', 'ProductVariationImagesController.create')
+      Route.put('/:id', 'ProductVariationImagesController.update')
+      Route.delete('/:id', 'ProductVariationImagesController.delete')
+    }).middleware('auth')
+  }).prefix('product-variation-image')
 }).prefix('api')

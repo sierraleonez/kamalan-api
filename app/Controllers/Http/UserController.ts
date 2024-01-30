@@ -6,6 +6,8 @@ export default class UserController {
     const email = request.input('email')
     const password = request.input('password')
     const name = request.input('name')
+    const birth_date = request.input('birth_date')
+    const phone_number = request.input('phone_number')
 
     await User.create({
       name,

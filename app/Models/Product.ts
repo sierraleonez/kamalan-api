@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, HasMany, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasMany, HasManyThrough, column, hasMany, hasManyThrough } from '@ioc:Adonis/Lucid/Orm'
 import ProductVariation from 'App/Models/ProductVariation'
+import ProductVariationImage from './ProductVariationImage'
 
 export default class Product extends BaseModel {
   @column({ isPrimary: true })
@@ -20,6 +21,9 @@ export default class Product extends BaseModel {
 
   @hasMany(() => ProductVariation, { foreignKey: 'product_id' })
   public productVariations: HasMany<typeof ProductVariation>
+
+  @hasManyThrough([() => ProductVariationImage, () => ProductVariation], { foreignKey: 'product_id', throughForeignKey: 'product_variation_id' })
+  images: HasManyThrough<typeof ProductVariationImage>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
