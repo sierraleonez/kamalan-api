@@ -84,4 +84,27 @@ Route.group(() => {
       Route.delete('/:id', 'ProductVariationImagesController.delete')
     }).middleware('auth')
   }).prefix('product-variation-image')
+
+  // Event Product
+  Route.group(() => {
+    Route.get('/', 'EventProductsController.index')
+    Route.get('/:id', 'EventProductsController.show')
+    Route.group(() => {
+      Route.post('/create', 'EventProductsImagesController.create')
+      Route.put('/:id', 'EventProductsImagesController.update')
+      Route.delete('/:id', 'EventProductsImagesController.delete')
+    }).middleware('auth')
+  }).prefix('event-product')
+
+  // Registry Design
+  Route.group(() => {
+    Route.get('/', 'RegistryDesignsController.index')
+    Route.get('/:id', 'RegistryDesignsController.show')
+    Route.group(() => {
+      Route.post('/create', 'RegistryDesignsController.create')
+      Route.put('/:id', 'RegistryDesignsController.update')
+      Route.delete('/:id', 'RegistryDesignsController.delete')
+    }).middleware('auth')
+  }).prefix('registry-design')
+
 }).prefix('api')

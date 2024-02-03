@@ -15,8 +15,8 @@ export default class BrandsController {
 
   public async show({ params }: HttpContextContract) {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const brand_id = params.id
-    const brand = await Brand.findOrFail(brand_id)
+    const id = params.id
+    const brand = await Brand.findOrFail(id)
     return {
       message: 'brand retrieved',
       data: {
