@@ -21,8 +21,21 @@
     "rules": {
       "prettier/prettier": [
         "error"
-      ]
-    }
+      ],
+      "camelcase": ["error"],
+      "@typescript-eslint/naming-convention": [
+        "error",
+        { "selector": "property", "format": ["snake_case", "camelCase", "UPPER_CASE"] }
+    ]
+    },
+    "overrides": [
+      {
+        "files": ["**/*.ts"],
+        "rules": {
+          "camelcase": "off"
+        }
+      }
+    ]
   },
   "eslintIgnore": [
     "build"

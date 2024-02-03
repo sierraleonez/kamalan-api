@@ -14,6 +14,7 @@ export default class BrandsController {
   }
 
   public async show({ params }: HttpContextContract) {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const brand_id = params.id
     const brand = await Brand.findOrFail(brand_id)
     return {
@@ -28,6 +29,7 @@ export default class BrandsController {
     const name = request.input('name')
     const location = request.input('location')
     // const delivery_address_id = request.input('delivery_address_id')
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const thumbnail_url = request.input('thumbnail_url')
     const description = request.input('description')
 
@@ -58,12 +60,12 @@ export default class BrandsController {
         name,
         location,
         thumbnail_url,
-        description
+        description,
       })
       .save()
 
     return {
-      message: 'brand updated'
+      message: 'brand updated',
     }
   }
 
@@ -74,7 +76,7 @@ export default class BrandsController {
     await existingBrand.delete()
 
     return {
-      message: 'brand deleted'
+      message: 'brand deleted',
     }
   }
 }

@@ -1,6 +1,12 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, SnakeCaseNamingStrategy, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import ProductVariation from './ProductVariation'
+import {
+  BaseModel,
+  BelongsTo,
+  SnakeCaseNamingStrategy,
+  belongsTo,
+  column,
+} from '@ioc:Adonis/Lucid/Orm'
+import ProductVariation from 'App/Models/ProductVariation'
 
 export default class ProductVariationImage extends BaseModel {
   public static namingStrategy = new SnakeCaseNamingStrategy()
@@ -20,5 +26,5 @@ export default class ProductVariationImage extends BaseModel {
   public updatedAt: DateTime
 
   @belongsTo(() => ProductVariation, { foreignKey: 'product_variation_id' })
-  declare productVariations: BelongsTo<typeof ProductVariation>
+  public declare productVariations: BelongsTo<typeof ProductVariation>
 }

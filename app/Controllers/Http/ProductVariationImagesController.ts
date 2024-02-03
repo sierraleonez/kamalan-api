@@ -28,11 +28,11 @@ export default class ProductVariationImagesController {
 
     await ProductVariationImage.create({
       product_variation_id,
-      asset_url
+      asset_url,
     })
 
     return {
-      message: 'product variation image created'
+      message: 'product variation image created',
     }
   }
 
@@ -45,12 +45,12 @@ export default class ProductVariationImagesController {
     await currentProductVariationImage
       .merge({
         product_variation_id,
-        asset_url
+        asset_url,
       })
       .save()
-    
+
     return {
-      message: 'product variation image updated'
+      message: 'product variation image updated',
     }
   }
 
@@ -61,7 +61,7 @@ export default class ProductVariationImagesController {
     await currentProductVariationImage.delete()
 
     return {
-      message: 'product variation image deleted'
+      message: 'product variation image deleted',
     }
   }
 }

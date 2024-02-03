@@ -7,6 +7,4 @@ export default class RegistryController {
     console.log(auth.use('web').isLoggedIn)
     return Database.from('events').select('*')
   }
-
-
 }

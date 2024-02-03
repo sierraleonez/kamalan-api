@@ -26,7 +26,7 @@ export default class User extends BaseModel {
   public updatedAt: DateTime
 
   @beforeSave()
-  public static async hashPassword (user: User) {
+  public static async hashPassword(user: User) {
     if (user.$dirty.password) {
       user.password = await Hash.make(user.password)
     }
@@ -34,7 +34,7 @@ export default class User extends BaseModel {
 
   @beforeSave()
   public static async checkIsEmailUnique(user: User) {
-    const currentUser = await User.findBy("email", user.email);
+    const currentUser = await User.findBy('email', user.email)
     if (currentUser) {
       throw new Exception('Email already used')
     }

@@ -18,8 +18,8 @@ export default class EventsController {
     return {
       message: 'event retrieved',
       data: {
-        event: eventInstance
-      }
+        event: eventInstance,
+      },
     }
   }
 
@@ -48,7 +48,7 @@ export default class EventsController {
     await eventInstance.merge({ name, asset_url, include_on }).save()
 
     return {
-      message: 'event updated'
+      message: 'event updated',
     }
   }
 
@@ -59,7 +59,7 @@ export default class EventsController {
     await eventInstance.delete()
 
     return {
-      message: "event deleted"
+      message: 'event deleted',
     }
   }
 }

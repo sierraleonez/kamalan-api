@@ -1,15 +1,15 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-import ProductVariation from "App/Models/ProductVariation";
+import ProductVariation from 'App/Models/ProductVariation'
 
 export default class ProductVariationsController {
   public async index() {
-    const ProductVariations = await ProductVariation.all()
+    const productVariations = await ProductVariation.all()
     return {
       message: 'product variations retrieved',
       data: {
-        ProductVariations
-      }
+        productVariations,
+      },
     }
   }
 
@@ -21,8 +21,8 @@ export default class ProductVariationsController {
     return {
       message: 'product variation retrieved',
       data: {
-        productVariation
-      }
+        productVariation,
+      },
     }
   }
 
@@ -36,11 +36,11 @@ export default class ProductVariationsController {
       product_id,
       name,
       price,
-      qty
+      qty,
     })
 
     return {
-      message: 'product variation created'
+      message: 'product variation created',
     }
   }
 
@@ -57,12 +57,12 @@ export default class ProductVariationsController {
         product_id,
         name,
         price,
-        qty
+        qty,
       })
       .save()
-    
+
     return {
-      message: 'product variation updated'
+      message: 'product variation updated',
     }
   }
 
@@ -72,7 +72,7 @@ export default class ProductVariationsController {
     await existingProductVariation.delete()
 
     return {
-      message: 'product variation deleted'
+      message: 'product variation deleted',
     }
   }
 }

@@ -36,5 +36,4 @@ export default class UserController {
       message: 'logout success',
     }
   }
-
 }

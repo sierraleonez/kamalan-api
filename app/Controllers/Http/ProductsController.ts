@@ -1,15 +1,14 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Product from "App/Models/Product";
-
+import Product from 'App/Models/Product'
 
 export default class ProductsController {
   public async index() {
-    const products = await Product.all();
+    const products = await Product.all()
     return {
       message: 'products retrieved',
       data: {
-        products
-      }
+        products,
+      },
     }
   }
 
@@ -22,8 +21,8 @@ export default class ProductsController {
     return {
       message: 'product retrieved',
       data: {
-        product
-      }
+        product,
+      },
     }
   }
 
@@ -37,11 +36,11 @@ export default class ProductsController {
       name,
       brand_id,
       thumbnail_url,
-      description
+      description,
     })
 
     return {
-      message: 'product created'
+      message: 'product created',
     }
   }
 
@@ -58,12 +57,12 @@ export default class ProductsController {
         name,
         brand_id,
         thumbnail_url,
-        description
+        description,
       })
       .save()
 
     return {
-      message: 'product updated'
+      message: 'product updated',
     }
   }
 
@@ -74,7 +73,7 @@ export default class ProductsController {
     await currentProduct.delete()
 
     return {
-      message: 'product deleted'
+      message: 'product deleted',
     }
   }
 }

@@ -19,18 +19,19 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class ExceptionHandler extends HttpExceptionHandler {
   protected errorMessages = {
-    '404': 'Resource not found',
-    '401': 'Unauthorized access'
+    notFound: 'Resource not found',
+    unauthorized: 'Unauthorized access',
   }
   constructor() {
     super(Logger)
   }
 
   public async handle(error: any, _ctx: HttpContextContract): Promise<any> {
-    if (error.code === 'E_ROW_NOT_FOUND') {
-      return {
-        message: this.errorMessages[404]
-      }
+    switch (error.code) {
+      case 'E_ROW_NOT_FOUND':
+        return this.errorMessages.notFound
+      default:
+        return error
     }
   }
 }
