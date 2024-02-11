@@ -36,7 +36,7 @@ export default class User extends BaseModel {
   public static async checkIsEmailUnique(user: User) {
     const currentUser = await User.findBy('email', user.email)
     if (currentUser) {
-      throw new Exception('Email already used')
+      throw new Exception('Email already used', 422)
     }
   }
 }

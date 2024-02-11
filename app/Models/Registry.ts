@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, HasOne, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import RegistryDesign from './RegistryDesign'
+import User from './User'
 
 export default class Registry extends BaseModel {
   @column({ isPrimary: true })
@@ -27,10 +28,18 @@ export default class Registry extends BaseModel {
   @column()
   public design_id: number
 
+  @column()
+  public user_id: number
+
   @hasOne(() => RegistryDesign, {
-    foreignKey: 'design_id'
+    foreignKey: 'design_id',
   })
   public design: HasOne<typeof RegistryDesign>
+
+  @hasOne(() => User, {
+    foreignKey: 'user_id',
+  })
+  public user: HasOne<typeof User>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

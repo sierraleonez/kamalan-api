@@ -26,6 +26,7 @@ Route.group(() => {
     Route.post('/create', 'UserController.create')
     Route.post('/login', 'UserController.login')
     Route.post('/logout', 'UserController.logout')
+    Route.delete('/:id', 'UserController.delete')
   }).prefix('user')
 
   Route.get('/', 'RegistryController.index')
@@ -107,4 +108,25 @@ Route.group(() => {
     }).middleware('auth')
   }).prefix('registry-design')
 
+  // Registry
+  Route.group(() => {
+    Route.get('/', 'RegistryController.index')
+    Route.group(() => {
+      Route.get('/:id', 'RegistryController.show')
+      Route.post('/create', 'RegistryController.create')
+      Route.put('/:id', 'RegistryController.update')
+      Route.delete('/:id', 'RegistryController.delete')
+    }).middleware('auth')
+  }).prefix('registry')
+
+  // User Delivery Address
+  Route.group(() => {
+    Route.get('/', 'UserDeliveryAddressesController.index')
+    Route.group(() => {
+      Route.get('/:id', 'UserDeliveryAddressesController.show')
+      Route.post('/create', 'UserDeliveryAddressesController.create')
+      Route.put('/:id', 'UserDeliveryAddressesController.update')
+      Route.delete('/:id', 'UserDeliveryAddressesController.delete')
+    }).middleware('auth')
+  }).prefix('user-delivery-address')
 }).prefix('api')

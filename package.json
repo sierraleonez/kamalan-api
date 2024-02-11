@@ -8,7 +8,21 @@
     "start": "node server.js",
     "test": "node ace test",
     "lint": "eslint . --ext=.ts",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "prepare": "husky"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm test"
+    }
+  },
+  "lint-staged": {
+    "*.{ts}": [
+      "pretty-quick --staged",
+      "eslint --fix",
+      "git add"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -22,15 +36,26 @@
       "prettier/prettier": [
         "error"
       ],
-      "camelcase": ["error"],
+      "camelcase": [
+        "error"
+      ],
       "@typescript-eslint/naming-convention": [
         "error",
-        { "selector": "property", "format": ["snake_case", "camelCase", "UPPER_CASE"] }
-    ]
+        {
+          "selector": "property",
+          "format": [
+            "snake_case",
+            "camelCase",
+            "UPPER_CASE"
+          ]
+        }
+      ]
     },
     "overrides": [
       {
-        "files": ["**/*.ts"],
+        "files": [
+          "**/*.ts"
+        ],
         "rules": {
           "camelcase": "off"
         }
@@ -61,8 +86,11 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-adonis": "^2.1.1",
     "eslint-plugin-prettier": "^5.1.3",
+    "husky": "^9.0.10",
+    "lint-staged": "^15.2.1",
     "pino-pretty": "^10.3.1",
     "prettier": "^3.2.4",
+    "pretty-quick": "^4.0.0",
     "typescript": "~4.6",
     "youch": "^3.3.3",
     "youch-terminal": "^2.2.3"

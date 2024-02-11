@@ -27,6 +27,14 @@ export default class ExceptionHandler extends HttpExceptionHandler {
   }
 
   public async handle(error: any, _ctx: HttpContextContract): Promise<any> {
+    if (error.message) {
+      return {
+        message: error.message,
+        ...(process.env.NODE_ENV === 'development' &&
+          error?.messages?.errors && { errors: error.messages.errors }),
+      }
+    }
+
     switch (error.code) {
       case 'E_ROW_NOT_FOUND':
         return this.errorMessages.notFound

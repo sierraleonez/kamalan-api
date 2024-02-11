@@ -7,14 +7,17 @@ export default class UserController {
     const password = request.input('password')
     const name = request.input('name')
 
-    await User.create({
+    const user = await User.create({
       name,
       email,
       password,
     })
 
     return {
-      message: 'success create user',
+      message: 'user created',
+      data: {
+        id: user.id,
+      },
     }
   }
 
@@ -32,6 +35,17 @@ export default class UserController {
     await auth.use('web').logout()
     return {
       message: 'logout success',
+    }
+  }
+
+  public async delete({ params }: HttpContextContract) {
+    const id = params.id
+
+    const user = await User.findOrFail(id)
+    await user.delete()
+
+    return {
+      message: 'user deleted',
     }
   }
 }
