@@ -1,6 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-import EventProduct from "App/Models/EventProduct";
+import EventProduct from 'App/Models/EventProduct'
 
 export default class EventProductsController {
   public async index() {
@@ -8,8 +8,8 @@ export default class EventProductsController {
     return {
       message: 'event products retrieved',
       data: {
-        eventProducts
-      }
+        eventProducts,
+      },
     }
   }
 
@@ -18,7 +18,7 @@ export default class EventProductsController {
     const eventProduct = await EventProduct.findOrFail(id)
     return {
       message: 'event product retrieved',
-      eventProduct
+      eventProduct,
     }
   }
 
@@ -28,11 +28,11 @@ export default class EventProductsController {
 
     await EventProduct.create({
       event_id,
-      product_id
+      product_id,
     })
 
     return {
-      message: 'event product created'
+      message: 'event product created',
     }
   }
 
@@ -45,12 +45,12 @@ export default class EventProductsController {
     await currentEventProduct
       .merge({
         event_id,
-        product_id
+        product_id,
       })
       .save()
 
     return {
-      message: 'event product updated'
+      message: 'event product updated',
     }
   }
 
@@ -61,7 +61,7 @@ export default class EventProductsController {
     await currentEventProduct.delete()
 
     return {
-      message: 'event product deleted '
+      message: 'event product deleted ',
     }
   }
 }

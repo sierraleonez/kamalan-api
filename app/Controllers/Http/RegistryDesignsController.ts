@@ -1,6 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-import RegistryDesign from "App/Models/RegistryDesign";
+import RegistryDesign from 'App/Models/RegistryDesign'
 
 export default class RegistryDesignsController {
   public async index() {
@@ -8,8 +8,8 @@ export default class RegistryDesignsController {
     return {
       message: 'registry designs retrieved',
       data: {
-        registryDesigns
-      }
+        registryDesigns,
+      },
     }
   }
 
@@ -20,8 +20,8 @@ export default class RegistryDesignsController {
     return {
       message: 'registry design retrieved',
       data: {
-        registryDesign
-      }
+        registryDesign,
+      },
     }
   }
 
@@ -31,14 +31,14 @@ export default class RegistryDesignsController {
 
     const newRegistryDesign = await RegistryDesign.create({
       name,
-      asset_url
+      asset_url,
     })
 
     return {
       message: 'registry design created',
       data: {
-        id: newRegistryDesign.id
-      }
+        id: newRegistryDesign.id,
+      },
     }
   }
 
@@ -51,12 +51,12 @@ export default class RegistryDesignsController {
     await registryDesign
       .merge({
         name,
-        asset_url
+        asset_url,
       })
       .save()
 
     return {
-      message: 'registry design updated'
+      message: 'registry design updated',
     }
   }
 
@@ -67,7 +67,7 @@ export default class RegistryDesignsController {
     await registryDesign.delete()
 
     return {
-      message: 'registry design deleted'
+      message: 'registry design deleted',
     }
   }
 }
