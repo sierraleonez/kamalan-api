@@ -116,6 +116,20 @@ Route.group(() => {
       Route.post('/create', 'RegistryController.create')
       Route.put('/:id', 'RegistryController.update')
       Route.delete('/:id', 'RegistryController.delete')
+
+      // Registry Creation Flow
+      Route.group(() => {
+        Route.post('/step-1', 'RegistryCreationsController.step_1')
+        Route.post('/step-2', 'RegistryCreationsController.step_2')
+        Route.post('/step-3', 'RegistryCreationsController.step_3')
+
+        Route.group(() => {
+          Route.get('/:id/list', 'RegistryCreationsController.listCartItem')
+          Route.post('/:id/create', 'RegistryCreationsController.addItemToCart')
+          Route.put('/update/:id', 'RegistryCreationsController.updateCartItem')
+          Route.delete('/delete/:id', 'RegistryCreationsController.deleteCartItem')
+        }).prefix('cart')
+      }).prefix('creation')
     }).middleware('auth')
   }).prefix('registry')
 
@@ -129,4 +143,25 @@ Route.group(() => {
       Route.delete('/:id', 'UserDeliveryAddressesController.delete')
     }).middleware('auth')
   }).prefix('user-delivery-address')
+
+  // // Registry Delivery Data
+  // Route.group(() => {
+  //   Route.get('/', 'registryDeliveryDataController.index')
+  //   Route.group(() => {
+  //     Route.get('/:id', 'registryDeliveryDataController.show')
+  //     Route.post('/create', 'registryDeliveryDataController.create')
+  //     Route.put('/:id', 'registryDeliveryDataController.update')
+  //     Route.delete('/:id', 'registryDeliveryDataController.delete')
+  //   }).middleware('auth')
+  // }).prefix('registry-delivery-data')
+
+  // Registry Product Cart
+  Route.group(() => {
+    Route.get('/:registryId', 'RegistryProductCartsController.index')
+    Route.post('/create', 'RegistryProductCartsController.create')
+    Route.put('/:id', 'RegistryProductCartsController.update')
+    Route.delete('/:id', 'RegistryProductCartsController.delete')
+  })
+    .prefix('registry-product-cart')
+    .middleware('auth')
 }).prefix('api')

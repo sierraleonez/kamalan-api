@@ -66,20 +66,20 @@ export default class UserDeliveryAddressesController {
 
     const payload = await request.validate({
       schema: schema.create({
-        name: schema.string([]),
-        phone_number: schema.string([rules.alphaNum()]),
-        province: schema.string([]),
-        city: schema.string([]),
-        district: schema.string([]),
-        subdistrict: schema.string([]),
-        postal_code: schema.number([]),
-        detail_address: schema.string([]),
+        name: schema.string.optional(),
+        phone_number: schema.string.optional([rules.alphaNum()]),
+        province: schema.string.optional(),
+        city: schema.string.optional(),
+        district: schema.string.optional(),
+        subdistrict: schema.string.optional(),
+        postal_code: schema.number.optional(),
+        detail_address: schema.string.optional(),
       }),
     })
 
     const userDeliveryAddress = await UserDeliveryAddress.findOrFail(id)
 
-    isAuthorizedForResource(ctx, userDeliveryAddress.id)
+    isAuthorizedForResource(ctx, userDeliveryAddress.user_id)
 
     await userDeliveryAddress.merge({ ...payload }).save()
 

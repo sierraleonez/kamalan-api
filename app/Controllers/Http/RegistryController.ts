@@ -5,7 +5,7 @@ import RegistryValidator from 'App/Validators/RegistryValidator'
 
 export default class RegistryController {
   public async index() {
-    const registries = await Registry.all()
+    const registries = await Registry.query().where('is_published', true)
     return {
       message: 'registries retrieved',
       data: {
@@ -21,6 +21,8 @@ export default class RegistryController {
     const registry = await Registry.findOrFail(id)
 
     isAuthorizedForResource(ctx, registry.user_id)
+    await registry.load('event')
+    await registry.load('design')
 
     return {
       message: 'registry retrieved',
@@ -35,14 +37,14 @@ export default class RegistryController {
     const user_id = auth.user?.id
     const validator = new RegistryValidator(ctx)
     const payload = await request.validate({ schema: validator.schema })
-    const name = payload.name
-    const event_date = payload.event_date
+    const { name, event_date, event_id } = payload
     const is_private = false
     const is_published = false
 
     const registry = await Registry.create({
       name,
       event_date,
+      event_id,
       is_private,
       is_published,
       user_id,
@@ -66,6 +68,7 @@ export default class RegistryController {
     const user_asset_url = request.input('user_asset_url')
     const design_id = request.input('design_id')
     const message = request.input('message')
+    const event_id = request.input('event_id')
 
     const registry = await Registry.findOrFail(id)
 
@@ -80,6 +83,7 @@ export default class RegistryController {
         is_published,
         message,
         user_asset_url,
+        event_id,
       })
       .save()
 
