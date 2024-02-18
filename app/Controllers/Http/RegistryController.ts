@@ -43,7 +43,7 @@ export default class RegistryController {
 
     const registry = await Registry.create({
       name,
-      event_date,
+      event_date: new Date(event_date.toSQLDate() || ''),
       event_id,
       is_private,
       is_published,

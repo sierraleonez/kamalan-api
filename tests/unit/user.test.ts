@@ -1,4 +1,3 @@
-import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 
 const user = {
