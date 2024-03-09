@@ -3,21 +3,28 @@ import {
   BaseModel,
   BelongsTo,
   SnakeCaseNamingStrategy,
+  beforeCreate,
   belongsTo,
   column,
 } from '@ioc:Adonis/Lucid/Orm'
+import { idGenerator } from 'App/Utils/id/generator'
 import ProductVariation from 'App/Models/ProductVariation'
 
 export default class ProductVariationImage extends BaseModel {
   public static namingStrategy = new SnakeCaseNamingStrategy()
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
-  public product_variation_id: number
+  public product_variation_id: string
 
   @column()
   public asset_url: string
+
+  @beforeCreate()
+  public static async generateId(productImage: ProductVariationImage) {
+    productImage.id = idGenerator('productVariationImage')
+  }
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

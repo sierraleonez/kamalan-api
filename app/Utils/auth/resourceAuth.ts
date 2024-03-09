@@ -3,7 +3,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default function isAuthorizedForResource(
   { auth }: HttpContextContract,
-  resource_user_id: number
+  resource_user_id: string
 ) {
   const current_user_id = auth.user?.id
 

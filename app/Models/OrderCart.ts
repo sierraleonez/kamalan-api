@@ -1,20 +1,24 @@
 import { DateTime } from 'luxon'
-import { BaseModel, HasOne, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasOne, beforeCreate, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import Order from 'App/Models/Order'
 import ProductVariation from './ProductVariation'
+import { idGenerator } from 'App/Utils/id/generator'
 
 export default class OrderCart extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
-  public order_id: number
+  public order_id: string
 
   @column()
-  public product_variation_id: number
+  public product_variation_id: string
 
   @column()
   public qty: number
+
+  @column()
+  public brand_id: string
 
   @hasOne(() => Order, {
     localKey: 'order_id',
@@ -25,6 +29,11 @@ export default class OrderCart extends BaseModel {
     localKey: 'product_variation_id',
   })
   public productVariation: HasOne<typeof ProductVariation>
+
+  @beforeCreate()
+  public static async generateId(orderCart: OrderCart) {
+    orderCart.id = idGenerator('orderCart')
+  }
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

@@ -51,6 +51,10 @@ Route.group(() => {
       Route.put('/:id', 'BrandsController.update')
       Route.delete('/:id', 'BrandsController.delete')
     }).middleware('auth')
+
+    Route.group(() => {
+      Route.post('/create', 'BrandsController.createDeliveryAddress')
+    }).prefix('delivery-address')
   }).prefix('brand')
 
   // Product
@@ -91,9 +95,9 @@ Route.group(() => {
     Route.get('/', 'EventProductsController.index')
     Route.get('/:id', 'EventProductsController.show')
     Route.group(() => {
-      Route.post('/create', 'EventProductsImagesController.create')
-      Route.put('/:id', 'EventProductsImagesController.update')
-      Route.delete('/:id', 'EventProductsImagesController.delete')
+      Route.post('/create', 'EventProductsController.create')
+      Route.put('/:id', 'EventProductsController.update')
+      Route.delete('/:id', 'EventProductsController.delete')
     }).middleware('auth')
   }).prefix('event-product')
 
@@ -164,4 +168,22 @@ Route.group(() => {
   })
     .prefix('registry-product-cart')
     .middleware('auth')
+
+  Route.group(() => {
+    Route.get('/payment-methods', 'RegistryPaymentsController.getPaymentMethods')
+  }).prefix('payment')
+
+  Route.group(() => {
+    Route.post('/registry/create', 'OrdersController.createRegistryOrder')
+  })
+    .prefix('order')
+    .middleware('auth')
+
+  Route.group(() => {
+    Route.get('/province', 'MastersController.provinceIndex')
+    Route.get('/city', 'MastersController.cityIndex')
+    Route.get('/city/:id', 'MastersController.showCity')
+    Route.get('/subdistrict', 'MastersController.subdistrictIndex')
+    Route.get('/subdistrict/:id', 'MastersController.showSubdistrict')
+  }).prefix('master')
 }).prefix('api')

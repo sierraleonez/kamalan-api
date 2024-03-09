@@ -3,16 +3,17 @@ import { BaseModel, HasOne, beforeCreate, column, hasOne } from '@ioc:Adonis/Luc
 import Registry from 'App/Models/Registry'
 import ProductVariation from 'App/Models/ProductVariation'
 import { Exception } from '@adonisjs/core/build/standalone'
+import { idGenerator } from 'App/Utils/id/generator'
 
 export default class RegistryProductCart extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
-  public registry_id: number
+  public registry_id: string
 
   @column()
-  public product_variation_id: number
+  public product_variation_id: string
 
   @column()
   public initial_qty: number
@@ -41,6 +42,11 @@ export default class RegistryProductCart extends BaseModel {
     if (existedItemCart) {
       throw new Exception('cart item already existed, please use update instead', 422)
     }
+  }
+
+  @beforeCreate()
+  public static async generateId(cart: RegistryProductCart) {
+    cart.id = idGenerator('registryCart')
   }
 
   @column.dateTime({ autoCreate: true })

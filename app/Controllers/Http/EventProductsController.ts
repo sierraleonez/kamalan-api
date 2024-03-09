@@ -3,8 +3,9 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import EventProduct from 'App/Models/EventProduct'
 
 export default class EventProductsController {
-  public async index() {
-    const eventProducts = await EventProduct.all()
+  public async index({ request }: HttpContextContract) {
+    const event_id = request.input('event_id')
+    const eventProducts = await EventProduct.query().where('event_id', event_id)
     return {
       message: 'event products retrieved',
       data: {

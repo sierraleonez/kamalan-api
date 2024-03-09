@@ -1,9 +1,11 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasOne, beforeCreate, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
+import { idGenerator } from 'App/Utils/id/generator'
+import BrandDeliveryAddress from './BrandDeliveryAddress'
 
 export default class Brand extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
   public name: string
@@ -11,14 +13,22 @@ export default class Brand extends BaseModel {
   @column()
   public location: string
 
-  // @column()
-  // public delivery_address_id: number
-
   @column()
   public thumbnail_url: string
 
   @column()
   public description: string
+
+  @beforeCreate()
+  public static async generateId(brand: Brand) {
+    brand.id = idGenerator('brand')
+  }
+
+  @hasOne(() => BrandDeliveryAddress, {
+    localKey: 'id',
+    foreignKey: 'brand_id',
+  })
+  public brandDeliveryAddress: HasOne<typeof BrandDeliveryAddress>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

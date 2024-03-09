@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "kamalan-client",
+  "private_key_id": "c0ac85743f9f4ab3db3c4eb8d4476649d822c093",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDnaJMzyQi7QwsG\n5/SfCEOllNJkV/TVI6zLRKqwnZKtTc7o1H4wxOei/Epo9qLJDciTfB64OEm9ewSh\nv1o6CjgYSkOmFA6yIpt5FoElmYGFsVJjrTyadgCNkV1XbsJTrllNrBaxn3heJ9z5\nxmmqOSB8KsKUs9ZRnwEdPoTAOACFqwnGsAPtt8kmp5k3gINogzdACLeBeTE8DUr1\ngIWOzcP3NOl1GT6LmrbwPUQiGvLMbtARHbUL857DtLc0E7XWT98YS2amzdtqFYNT\nEN56IAWSk+FMJlXfObxRqdD36MGpHR6jd8f/2z/wH2e3PxNOA/CKabOUjQ0QzkOK\nmdXYX3FpAgMBAAECggEAck88o9CTQRmxmUQ8mNB2xhT5RvsR5LV+NlzhqmP0ICq2\n4lmRSlsCB4dz5Fys9f8ajQw7iom3l2Ns2s+Q7Om+YvVQbHos9j7VKR/+RMoK6rU4\nuydIsA5JYKUlhDqgwMB3ucAf57ccOPqdFD84VA9rJhrjSpx5apFOdhk7b05ap6vw\nrfkLQVBM9f1mtTjylTcTHqdLMB8C8YYW+gMuIm9LOraUMbjIlonUiDRmGTaM+Ah/\nA6BqFaoZDt4azz7VuWSAwQsbf1ZigsXOvH3I1Ts73JizFRjGfT4k2Mk4sDuuppSc\n8ZQrgZi0RC/2/d0sMQ7KI12hhdMIxawKQM3OnQAVlwKBgQDz/OoE1rR1FGcZUI1r\n+8lcnznq8ogWhjPd1kaMahpBTm/tI0QntmbwbAhPFcI6pX1bZyp9rnH4Y7KcyKtu\n1S6BFs3aGH1Ou3HC1PCel7oGwL8pgL/LTWeprpNUieK1F9VOru8A83dYMF0cjOn1\nSGYkIkqpeScjrsRNMrFwurI3ewKBgQDyzR3aaUCunbupF6bh74u6zUL68xdeg8D2\nuiAP/eQJ5Y+7YBID/XwXQPjgRRVI9A6xrsQ0DB91TNOo7OoiSYL+mlz8HD0zWgFE\nsfsGgolpyt0fVu/hr0aWj9L6a2tHzE4zmUE5WSIB7KYvLGcrjNmha1JdhI/qpohw\nTBXWVgJzawKBgG29cvCMNYx3icu8DG/mRvJu95jyTz16TTfZGdAsJPT8t6D8fLoz\n82bt4GrZyYuhRZnn9Belb8Od7AdSxrDKF+md/Sa8XxgbfRZ5umRKsDQ7W3/qVdm2\nTgrm54NdpWd4ecuzKPLPjv1Oe4LM6qoVT0OvXM+PG4iUIdzrER44CtKjAoGBAJQ7\njA1LEvVIUUizquvnPmyGYm0pOkw2rfkzut1oiO9N2olv5q/O8xKTVR4+rvcCIXJz\nG1AXUqFfjR1lvq++J55fCYPVjburKHkTHAlmapRPCN7YSc2EH9lN52WBbVbBMcEo\nwHxNoYiBPRgxyK765+c3yWpUwzRkBYphuTdI/WgPAoGAcikQOcs3GiuR5Su5KnkA\ndsyLsRJf2UKYkwjtBCuFDbQBppcx/Ft9wSkNXZbC0hqNJFKRFnBQJUIf0TGYiG67\naCsgA+160XtibvdukWQF38E9rvINuYR8D+xyTVdRNFJphGyXIw5y7cYppRTKGsdv\nNhGlc7RCazjXdaKIkEMfX3Y=\n-----END PRIVATE KEY-----\n",
+  "client_email": "kamalan-api-service-accoun-259@kamalan-client.iam.gserviceaccount.com",
+  "client_id": "113134451048160061814",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/kamalan-api-service-accoun-259%40kamalan-client.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -1,13 +1,22 @@
 import { DateTime } from 'luxon'
-import { BaseModel, HasMany, HasOne, column, hasMany, hasOne } from '@ioc:Adonis/Lucid/Orm'
+import {
+  BaseModel,
+  HasMany,
+  HasOne,
+  beforeCreate,
+  column,
+  hasMany,
+  hasOne,
+} from '@ioc:Adonis/Lucid/Orm'
 import RegistryDesign from 'App/Models/RegistryDesign'
 import User from 'App/Models/User'
 import Event from 'App/Models/Event'
 import RegistryProductCart from './RegistryProductCart'
+import { idGenerator } from 'App/Utils/id/generator'
 
 export default class Registry extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
   public name: string
@@ -28,26 +37,29 @@ export default class Registry extends BaseModel {
   public user_asset_url: string
 
   @column()
-  public design_id: number
+  public design_id: string
 
   @column()
-  public user_id: number
+  public user_id: string
 
   @column()
-  public event_id: number
+  public event_id: string
 
   @hasOne(() => RegistryDesign, {
-    foreignKey: 'design_id',
+    localKey: 'design_id',
+    foreignKey: 'id',
   })
   public design: HasOne<typeof RegistryDesign>
 
   @hasOne(() => User, {
-    foreignKey: 'user_id',
+    localKey: 'user_id',
+    foreignKey: 'id',
   })
   public user: HasOne<typeof User>
 
   @hasOne(() => Event, {
     localKey: 'event_id',
+    foreignKey: 'id',
   })
   public event: HasOne<typeof Event>
 
@@ -55,6 +67,11 @@ export default class Registry extends BaseModel {
     foreignKey: 'registry_id',
   })
   public cart: HasMany<typeof RegistryProductCart>
+
+  @beforeCreate()
+  public static async generateId(registry: Registry) {
+    registry.id = idGenerator('registry')
+  }
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

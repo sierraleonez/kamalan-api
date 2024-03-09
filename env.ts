@@ -28,4 +28,11 @@ export default Env.rules({
   PG_PASSWORD: Env.schema.string.optional(),
   PG_DB_NAME: Env.schema.string(),
   SESSION_DRIVER: Env.schema.string(),
+  GOOGLE_APPLICATION_CREDENTIALS: Env.schema.string(),
+  YUKK_CLIENT_ID: Env.schema.string(),
+  YUKK_CLIENT_SECRET: Env.schema.string(),
+  YUKK_MERCHANT_ID: Env.schema.string(),
+  YUKK_URL: Env.schema.string(),
+  RAJAONGKIR_URL: Env.schema.string(),
+  RAJAONGKIR_API_KEY: Env.schema.string(),
 })

@@ -32,7 +32,7 @@ export default class ProductVariationsController {
     const price = request.input('price')
     const qty = request.input('qty')
 
-    await ProductVariation.create({
+    const productVariation = await ProductVariation.create({
       product_id,
       name,
       price,
@@ -41,6 +41,7 @@ export default class ProductVariationsController {
 
     return {
       message: 'product variation created',
+      data: productVariation,
     }
   }
 

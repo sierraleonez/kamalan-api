@@ -1,4 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import YukkPaymentGateway from '@ioc:PaymentGateway/yukk'
 import Registry from 'App/Models/Registry'
 import isAuthorizedForResource from 'App/Utils/auth/resourceAuth'
 import RegistryValidator from 'App/Validators/RegistryValidator'
@@ -103,6 +104,17 @@ export default class RegistryController {
 
     return {
       message: 'registry deleted',
+    }
+  }
+
+  public async makePayment() {
+    const pg = await YukkPaymentGateway
+
+    const paymentMethods = await pg.getPaymentMethods()
+
+    return {
+      status: 'success',
+      data: paymentMethods,
     }
   }
 }

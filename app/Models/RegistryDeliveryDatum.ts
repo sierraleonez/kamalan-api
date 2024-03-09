@@ -1,26 +1,29 @@
 import { DateTime } from 'luxon'
-import { BaseModel, HasOne, beforeSave, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasOne, beforeCreate, beforeSave, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import Registry from 'App/Models/Registry'
 import UserDeliveryAddress from 'App/Models/UserDeliveryAddress'
 import { Exception } from '@adonisjs/core/build/standalone'
+import { idGenerator } from 'App/Utils/id/generator'
 
 export default class RegistryDeliveryDatum extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
-  public registry_id: number
+  public registry_id: string
 
   @column()
-  public user_delivery_address_id: number
+  public user_delivery_address_id: string
 
   @hasOne(() => Registry, {
     localKey: 'registry_id',
+    foreignKey: 'id',
   })
   public registry: HasOne<typeof Registry>
 
   @hasOne(() => UserDeliveryAddress, {
     localKey: 'user_delivery_address_id',
+    foreignKey: 'id',
   })
   public user_delivery_address: HasOne<typeof UserDeliveryAddress>
 
@@ -33,6 +36,11 @@ export default class RegistryDeliveryDatum extends BaseModel {
         throw new Exception('Registry not exist', 422)
       }
     }
+  }
+
+  @beforeCreate()
+  public static async generateId(registryDelivery: RegistryDeliveryDatum) {
+    registryDelivery.id = idGenerator('registryDelivery')
   }
 
   @beforeSave()

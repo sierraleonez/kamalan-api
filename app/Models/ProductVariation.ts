@@ -1,14 +1,14 @@
 import { DateTime } from 'luxon'
-import { BaseModel, HasMany, SnakeCaseNamingStrategy, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasMany, beforeCreate, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import ProductVariationImage from 'App/Models/ProductVariationImage'
+import { idGenerator } from 'App/Utils/id/generator'
 
 export default class ProductVariation extends BaseModel {
-  public static namingStrategy = new SnakeCaseNamingStrategy()
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
-  public product_id: number
+  public product_id: string
 
   @column()
   public name: string
@@ -21,6 +21,11 @@ export default class ProductVariation extends BaseModel {
 
   @hasMany(() => ProductVariationImage, { foreignKey: 'product_variation_id' })
   public productVariationImages: HasMany<typeof ProductVariationImage>
+
+  @beforeCreate()
+  public static async generateId(productVariation: ProductVariation) {
+    productVariation.id = idGenerator('productVariation')
+  }
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

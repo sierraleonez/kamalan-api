@@ -26,7 +26,7 @@ export default class RegistryValidator {
   public schema = schema.create({
     name: schema.string([rules.required()]),
     event_date: schema.date({}, [rules.required()]),
-    event_id: schema.number([rules.required()]),
+    event_id: schema.string([rules.required()]),
   })
 
   /**

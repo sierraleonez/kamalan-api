@@ -1,6 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import { CloudStorageInstance, NewFile } from 'App/Infra/cloud-storage'
 import RegistryDesign from 'App/Models/RegistryDesign'
+import { IMAGE_FILE_EXTENSION } from 'App/type/constant'
 
 export default class RegistryDesignsController {
   public async index() {
@@ -26,8 +28,13 @@ export default class RegistryDesignsController {
   }
 
   public async create({ request }: HttpContextContract) {
-    const name = request.input('name')
-    const asset_url = request.input('asset_url')
+    const validationSchema = schema.create({
+      name: schema.string([rules.required()]),
+      asset: schema.file({ extnames: IMAGE_FILE_EXTENSION }, [rules.required()]),
+    })
+    const { name, asset } = await request.validate({ schema: validationSchema })
+    const file = new NewFile(asset.tmpPath || '', asset.extname || '')
+    const asset_url = await CloudStorageInstance.upload('kamalan-registry-designs', file)
 
     const newRegistryDesign = await RegistryDesign.create({
       name,
@@ -36,9 +43,7 @@ export default class RegistryDesignsController {
 
     return {
       message: 'registry design created',
-      data: {
-        id: newRegistryDesign.id,
-      },
+      data: newRegistryDesign,
     }
   }
 

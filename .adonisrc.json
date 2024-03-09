@@ -19,7 +19,9 @@
     "@adonisjs/core",
     "@adonisjs/lucid",
     "@adonisjs/auth",
-    "@adonisjs/session"
+    "@adonisjs/session",
+    "./providers/PaymentGatewayProvider",
+    "./providers/DeliveryGatewayProvider"
   ],
   "aceProviders": ["@adonisjs/repl"],
   "tests": {

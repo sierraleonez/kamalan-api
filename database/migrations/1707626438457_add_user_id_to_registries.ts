@@ -5,7 +5,7 @@ export default class extends BaseSchema {
 
   public async up() {
     this.schema.alterTable(this.tableName, (table) => {
-      table.integer('user_id').references('id').inTable('users').onDelete('CASCADE').notNullable()
+      table.string('user_id').references('id').inTable('users').onDelete('CASCADE').notNullable()
     })
   }
 

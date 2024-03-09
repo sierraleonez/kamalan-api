@@ -4,22 +4,24 @@ import {
   HasMany,
   HasManyThrough,
   afterCreate,
+  beforeCreate,
   column,
   hasMany,
   hasManyThrough,
 } from '@ioc:Adonis/Lucid/Orm'
 import ProductVariation from 'App/Models/ProductVariation'
 import ProductVariationImage from './ProductVariationImage'
+import { idGenerator } from 'App/Utils/id/generator'
 
 export default class Product extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
   public name: string
 
   @column()
-  public brand_id: number
+  public brand_id: string
 
   @column()
   public thumbnail_url: string
@@ -27,7 +29,7 @@ export default class Product extends BaseModel {
   @column()
   public description: string
 
-  @hasMany(() => ProductVariation, { foreignKey: 'product_id' })
+  @hasMany(() => ProductVariation, { foreignKey: 'product_id', localKey: 'id' })
   public productVariations: HasMany<typeof ProductVariation>
 
   @hasManyThrough([() => ProductVariationImage, () => ProductVariation], {
@@ -44,6 +46,11 @@ export default class Product extends BaseModel {
       product_id: product.id,
       qty: 1,
     })
+  }
+
+  @beforeCreate()
+  public static async generateId(product: Product) {
+    product.id = idGenerator('product')
   }
 
   @column.dateTime({ autoCreate: true })

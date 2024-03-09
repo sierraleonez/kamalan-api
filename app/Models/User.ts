@@ -1,11 +1,12 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel } from '@ioc:Adonis/Lucid/Orm'
+import { column, beforeSave, BaseModel, beforeCreate } from '@ioc:Adonis/Lucid/Orm'
 import { Exception } from '@adonisjs/core/build/standalone'
+import { idGenerator } from 'App/Utils/id/generator'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
   public email: string
@@ -24,6 +25,11 @@ export default class User extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @beforeCreate()
+  public static generateId(user: User) {
+    user.id = idGenerator('user')
+  }
 
   @beforeSave()
   public static async hashPassword(user: User) {

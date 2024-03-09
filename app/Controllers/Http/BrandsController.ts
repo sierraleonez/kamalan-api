@@ -1,6 +1,9 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import { CloudStorageInstance, NewFile } from 'App/Infra/cloud-storage'
 import Brand from 'App/Models/Brand'
+import BrandDeliveryAddress from 'App/Models/BrandDeliveryAddress'
+import { IMAGE_FILE_EXTENSION } from 'App/type/constant'
 
 export default class BrandsController {
   public async index() {
@@ -17,45 +20,64 @@ export default class BrandsController {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const id = params.id
     const brand = await Brand.findOrFail(id)
+    await brand.load('brandDeliveryAddress')
     return {
       message: 'brand retrieved',
-      data: {
-        brand,
-      },
+      data: brand,
     }
   }
 
   public async create({ request }: HttpContextContract) {
-    const name = request.input('name')
-    const location = request.input('location')
-    // const delivery_address_id = request.input('delivery_address_id')
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const thumbnail_url = request.input('thumbnail_url')
-    const description = request.input('description')
+    const validationSchema = schema.create({
+      name: schema.string([rules.required()]),
+      location: schema.string([rules.required()]),
+      description: schema.string.optional(),
+      thumbnail: schema.file({ extnames: IMAGE_FILE_EXTENSION }, [rules.required()]),
+    })
 
-    await Brand.create({
+    const { thumbnail, location, name, description } = await request.validate({
+      schema: validationSchema,
+    })
+    const asset = new NewFile(thumbnail.tmpPath || '', thumbnail.extname || '')
+
+    const publicUrl = await CloudStorageInstance.upload('kamalan-brand-thumbnail', asset)
+
+    const thumbnail_url = publicUrl
+
+    const brand = await Brand.create({
       name,
       location,
-      // delivery_address_id,
       description,
       thumbnail_url,
     })
 
     return {
       message: 'brand created',
+      data: brand,
     }
   }
 
   public async update({ params, request }: HttpContextContract) {
     const id = params.id
-    const name = request.input('name')
-    const location = request.input('location')
-    // const delivery_address_id = request.input('delivery_address_id')
-    const thumbnail_url = request.input('thumbnail_url')
-    const description = request.input('description')
+    const validationSchema = schema.create({
+      name: schema.string.optional(),
+      location: schema.string.optional(),
+      thumbnail: schema.file.optional({ extnames: IMAGE_FILE_EXTENSION }),
+      description: schema.string.optional(),
+    })
+
+    const { description, location, name, thumbnail } = await request.validate({
+      schema: validationSchema,
+    })
 
     const existingBrand = await Brand.findOrFail(id)
-    await existingBrand
+
+    const asset = new NewFile(thumbnail?.tmpPath || '', thumbnail?.extname || '')
+
+    const publicUrl = await CloudStorageInstance.upload('kamalan-brand-thumbnail', asset)
+
+    const thumbnail_url = publicUrl
+    const brand = await existingBrand
       .merge({
         name,
         location,
@@ -66,6 +88,7 @@ export default class BrandsController {
 
     return {
       message: 'brand updated',
+      data: brand,
     }
   }
 
@@ -77,6 +100,26 @@ export default class BrandsController {
 
     return {
       message: 'brand deleted',
+    }
+  }
+
+  public async createDeliveryAddress({ request }: HttpContextContract) {
+    const validationSchema = schema.create({
+      brand_id: schema.string([rules.required()]),
+      name: schema.string([rules.required()]),
+      phone_number: schema.string([rules.required()]),
+      province_id: schema.string([rules.required()]),
+      city_id: schema.string([rules.required()]),
+      subdistrict: schema.string([rules.required()]),
+      postal_code: schema.number([rules.required()]),
+      detail_address: schema.string.optional(),
+    })
+    const payload = await request.validate({ schema: validationSchema })
+    const brandDeliveryAddress = await BrandDeliveryAddress.create(payload)
+
+    return {
+      message: 'brand delivery address created',
+      data: brandDeliveryAddress,
     }
   }
 }

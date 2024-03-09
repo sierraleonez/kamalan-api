@@ -1,11 +1,13 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
+import { CloudStorageInstance, NewFile } from 'App/Infra/cloud-storage'
 import Registry from 'App/Models/Registry'
 import RegistryDeliveryDatum from 'App/Models/RegistryDeliveryDatum'
 import RegistryProductCart from 'App/Models/RegistryProductCart'
 import UserDeliveryAddress from 'App/Models/UserDeliveryAddress'
 import isAuthorizedForResource from 'App/Utils/auth/resourceAuth'
+import { IMAGE_FILE_EXTENSION } from 'App/type/constant'
 
 export default class RegistryCreationsController {
   public async step_1(ctx: HttpContextContract) {
@@ -15,10 +17,10 @@ export default class RegistryCreationsController {
     const validator = schema.create({
       event_date: schema.date({}, [rules.required()]),
       name: schema.string([rules.required()]),
-      event_id: schema.number([rules.required()]),
+      event_id: schema.string([rules.required()]),
     })
 
-    const payload: { event_date: any; name: string; event_id: number } = await request.validate({
+    const payload: { event_date: any; name: string; event_id: string } = await request.validate({
       schema: validator,
     })
 
@@ -38,8 +40,8 @@ export default class RegistryCreationsController {
   public async step_2(ctx: HttpContextContract) {
     const { request } = ctx
     const validator = schema.create({
-      registry_id: schema.number([rules.required()]),
-      design_id: schema.number([rules.required()]),
+      registry_id: schema.string([rules.required()]),
+      design_id: schema.string([rules.required()]),
     })
 
     const payload = await request.validate({ schema: validator })
@@ -65,10 +67,10 @@ export default class RegistryCreationsController {
     const user_id = auth.user?.id
 
     const validator = schema.create({
-      registry_id: schema.number([rules.required()]),
+      registry_id: schema.string([rules.required()]),
       is_private: schema.boolean.optional(),
       is_published: schema.boolean.optional(),
-      user_asset_url: schema.string([rules.required()]),
+      user_asset: schema.file({ extnames: IMAGE_FILE_EXTENSION }, [rules.required()]),
       message: schema.string([rules.required()]),
       registry_name: schema.string.optional(),
       name: schema.string([rules.required()]),
@@ -87,6 +89,7 @@ export default class RegistryCreationsController {
     const registry = await Registry.findOrFail(payload.registry_id)
 
     isAuthorizedForResource(ctx, registry.user_id)
+
     const {
       city,
       province,
@@ -97,13 +100,16 @@ export default class RegistryCreationsController {
       phone_number,
       postal_code,
       registry_id,
-      event_date,
+      // event_date,
       is_private,
       is_published,
       message,
       registry_name,
-      user_asset_url,
+      user_asset,
     } = payload
+
+    const asset = new NewFile(user_asset.tmpPath || '', user_asset.extname || '')
+    const user_asset_url = await CloudStorageInstance.upload('kamalan-registry-image', asset)
 
     await Database.transaction(
       async (trx) => {
@@ -137,7 +143,7 @@ export default class RegistryCreationsController {
         registry.useTransaction(trx)
         await registry
           .merge({
-            event_date: new Date(event_date?.toSQLTime() || ''),
+            // event_date: new Date(event_date?.toSQLTime() || ''),
             is_private,
             is_published,
             message,
@@ -176,7 +182,7 @@ export default class RegistryCreationsController {
     const registry_id = params.id
 
     const validator = schema.create({
-      product_variation_id: schema.number([rules.required()]),
+      product_variation_id: schema.string([rules.required()]),
       qty: schema.number([rules.required()]),
     })
 
