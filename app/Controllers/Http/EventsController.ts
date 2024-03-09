@@ -35,9 +35,8 @@ export default class EventsController {
     const { asset, include_on, name } = payload
     const file = new NewFile(asset.tmpPath || '', asset.extname || '')
 
-    const [uploadResponse] = await CloudStorageInstance.upload('kamalan-event-images', file)
+    const asset_url = await CloudStorageInstance.upload('kamalan-event-images', file)
 
-    const asset_url = uploadResponse.publicUrl()
     const include_on_casted = include_on as EVENT_INCLUDE_ON
 
     const event = await Event.create({

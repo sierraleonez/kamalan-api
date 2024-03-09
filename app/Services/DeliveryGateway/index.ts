@@ -31,7 +31,7 @@ export default class DeliveryGateway {
         'content-type': 'application/x-www-form-urlencoded',
       },
     })
-    const resJson = await res.json()
+    const resJson: any = await res.json()
     return resJson.rajaongkir.results
   }
 }
