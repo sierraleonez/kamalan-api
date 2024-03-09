@@ -30,6 +30,9 @@ Route.group(() => {
   }).prefix('user')
 
   Route.get('/', 'RegistryController.index')
+  Route.post('/webhook/payment-gateway', ({ request }) => {
+    console.log(request.body())
+  })
 
   // Event
   Route.group(() => {
