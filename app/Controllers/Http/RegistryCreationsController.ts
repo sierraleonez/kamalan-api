@@ -1,7 +1,9 @@
+import { Exception } from '@adonisjs/core/build/standalone'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { CloudStorageInstance, NewFile } from 'App/Infra/cloud-storage'
+import ProductVariation from 'App/Models/ProductVariation'
 import Registry from 'App/Models/Registry'
 import RegistryDeliveryDatum from 'App/Models/RegistryDeliveryDatum'
 import RegistryProductCart from 'App/Models/RegistryProductCart'
@@ -186,12 +188,18 @@ export default class RegistryCreationsController {
       qty: schema.number([rules.required()]),
     })
 
-    const payload = await request.validate({ schema: validator })
+    const { product_variation_id, qty } = await request.validate({ schema: validator })
+
+    const product = await ProductVariation.findOrFail(product_variation_id)
+
+    if (product.qty < qty) {
+      throw new Exception('product qty exceeds available stocks', 400)
+    }
 
     const registryProductCart = await RegistryProductCart.create({
-      product_variation_id: payload.product_variation_id,
-      initial_qty: payload.qty,
-      current_qty: payload.qty,
+      product_variation_id: product_variation_id,
+      initial_qty: qty,
+      current_qty: qty,
       registry_id,
     })
 

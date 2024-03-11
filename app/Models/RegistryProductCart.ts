@@ -49,6 +49,16 @@ export default class RegistryProductCart extends BaseModel {
     cart.id = idGenerator('registryCart')
   }
 
+  @beforeCreate()
+  public static async checkStockAvailability(cart: RegistryProductCart) {
+    await cart.load('product_variation')
+    const productQty = cart.product_variation.qty
+
+    if (productQty < cart.current_qty) {
+      throw new Exception('product qty exceeds available stocks', 400)
+    }
+  }
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

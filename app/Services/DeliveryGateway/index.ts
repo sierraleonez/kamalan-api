@@ -1,9 +1,4 @@
-interface iCalculateCostArg {
-  origin: string
-  destination: string
-  weight: string
-  courier?: 'jnt' | 'pos' | 'tiki' | 'jne'
-}
+import { iCalculateCostArg, iCalculateCostResponse } from 'Contracts/DeliveryGateway/type'
 
 export default class DeliveryGateway {
   constructor(
@@ -20,7 +15,6 @@ export default class DeliveryGateway {
       weight,
       courier: courier ?? 'jnt:pos:tiki:jne',
     }
-    console.log(new URLSearchParams(payload).toString())
 
     const res = await fetch(`${this.base_url}/cost`, {
       method: 'POST',
@@ -31,7 +25,8 @@ export default class DeliveryGateway {
         'content-type': 'application/x-www-form-urlencoded',
       },
     })
-    const resJson: any = await res.json()
+    const resJson = (await res.json()) as iCalculateCostResponse
+    console.log(resJson)
     return resJson.rajaongkir.results
   }
 }

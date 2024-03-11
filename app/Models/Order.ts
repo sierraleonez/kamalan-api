@@ -24,6 +24,9 @@ export default class Order extends BaseModel {
   @column()
   public total_product_price: number
 
+  @column()
+  public payment_method: string
+
   @hasOne(() => User, {
     localKey: 'user_id',
   })

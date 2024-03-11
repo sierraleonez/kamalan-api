@@ -178,6 +178,7 @@ Route.group(() => {
 
   Route.group(() => {
     Route.post('/registry/create', 'OrdersController.createRegistryOrder')
+    Route.post('/request-payment', 'OrdersController.requestOrderPayment')
   })
     .prefix('order')
     .middleware('auth')

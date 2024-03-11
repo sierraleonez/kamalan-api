@@ -3,6 +3,7 @@ import { BaseModel, HasOne, beforeCreate, column, hasOne } from '@ioc:Adonis/Luc
 import Order from 'App/Models/Order'
 import ProductVariation from './ProductVariation'
 import { idGenerator } from 'App/Utils/id/generator'
+import { Exception } from '@adonisjs/core/build/standalone'
 
 export default class OrderCart extends BaseModel {
   @column({ isPrimary: true })
@@ -33,6 +34,16 @@ export default class OrderCart extends BaseModel {
   @beforeCreate()
   public static async generateId(orderCart: OrderCart) {
     orderCart.id = idGenerator('orderCart')
+  }
+
+  @beforeCreate()
+  public static async checkStockAvailability(cart: OrderCart) {
+    await cart.load('productVariation')
+    const productQty = cart.productVariation.qty
+
+    if (productQty < cart.qty) {
+      throw new Exception('product qty exceeds available stocks', 400)
+    }
   }
 
   @column.dateTime({ autoCreate: true })

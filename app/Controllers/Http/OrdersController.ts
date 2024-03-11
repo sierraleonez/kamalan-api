@@ -1,14 +1,19 @@
+import { Exception } from '@adonisjs/core/build/standalone'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
 import RajaOngkirDeliveryGateway from '@ioc:DeliveryGateway/RajaOngkir'
+import YukkPaymentGateway from '@ioc:PaymentGateway/yukk'
 import Brand from 'App/Models/Brand'
 import Order from 'App/Models/Order'
 import OrderCart from 'App/Models/OrderCart'
 import OrderDelivery from 'App/Models/OrderDelivery'
+import OrderPaymentMethod from 'App/Models/OrderPaymentMethod'
+import OrderStatus from 'App/Models/OrderStatus'
 import ProductVariation from 'App/Models/ProductVariation'
 import Registry from 'App/Models/Registry'
 import RegistryDeliveryDatum from 'App/Models/RegistryDeliveryDatum'
+import User from 'App/Models/User'
 import isAuthorizedForResource from 'App/Utils/auth/resourceAuth'
 
 export default class OrdersController {
@@ -75,7 +80,10 @@ export default class OrdersController {
 
       const [selectedShipment] = apiCostResp
       const selectedService = selectedShipment.costs.find((se) => se.service === item.service_type)
-      const [cost] = selectedService.cost
+      if (!selectedService) {
+        throw new Exception('Selected shipment not found', 400)
+      }
+      const [cost] = selectedService?.cost
 
       orderDeliveries.push({
         brand_id: item.brand_id,
@@ -116,6 +124,26 @@ export default class OrdersController {
 
         await OrderDelivery.createMany(orderDeliveries_db, { client: trx })
         await OrderCart.createMany(productCart_db, { client: trx })
+        await OrderStatus.create(
+          {
+            order_id: order.id,
+            status: 'unpaid',
+          },
+          {
+            client: trx,
+          }
+        )
+
+        // Deduct product
+        for await (const product of productCart) {
+          const variation = await ProductVariation.findOrFail(product.product_variation_id, {
+            client: trx,
+          })
+          if (variation.qty < product.qty) {
+            throw new Exception('product qty exceeds available stocks', 400)
+          }
+          await variation.merge({ qty: variation.qty - product.qty }).save()
+        }
       },
       { isolationLevel: 'read uncommitted' }
     )
@@ -124,5 +152,75 @@ export default class OrdersController {
       message: 'order created',
       // data: productsData,
     }
+  }
+
+  public async requestOrderPayment(ctx: HttpContextContract) {
+    const { request } = ctx
+    const validationSchema = schema.create({
+      order_id: schema.string([rules.required()]),
+      payment_method: schema.string([rules.required()]),
+    })
+
+    const { order_id, payment_method } = await request.validate({ schema: validationSchema })
+    const order = await Order.findOrFail(order_id)
+    const user = await User.findOrFail(order.user_id)
+
+    const yukk = await YukkPaymentGateway
+    const paymentResponse = await yukk.requestPayment({
+      orderDetail: {
+        amount: order?.total,
+        order_id: order_id,
+        shipping_fee: order.total_shipment_cost,
+      },
+      paymentMethod: payment_method,
+      userDetail: {
+        name: user.name,
+        email: user.email,
+        phone: '6282242404797',
+      },
+    })
+
+    Database.transaction(async (trx) => {
+      await OrderPaymentMethod.create(
+        {
+          payment_method,
+          order_id,
+        },
+        {
+          client: trx,
+        }
+      )
+
+      await OrderStatus.create(
+        {
+          order_id,
+          status: 'pending',
+        },
+        {
+          client: trx,
+        }
+      )
+    })
+
+    return {
+      message: 'request payment success',
+      data: paymentResponse,
+    }
+  }
+
+  public async webhookPaymentHandler({ request }: HttpContextContract) {
+    const body = request.body() as iYukkWebhookResponse
+    console.log(request.header('Signature'))
+    const order = await OrderStatus.findOrFail(body.order_id)
+    let status: string
+    switch (body.status) {
+      case 'SUCCESS':
+        status = 'paid'
+        break
+      default:
+        status = body.status.toLowerCase()
+    }
+
+    await order.merge({ status }).save()
   }
 }

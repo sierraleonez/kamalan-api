@@ -1,37 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { Exception } from '@adonisjs/core/build/standalone'
 import env from '@ioc:Adonis/Core/Env'
-
-interface iYukkAuthenticateResponse {
-  time: number
-  status_code: number
-  status_message: string
-  result: {
-    token_type: string
-    expires_in: number
-    access_token: string
-  }
-}
-
-interface iPaymentGatewayCredential {
-  merchant_id: string
-  pg_access_token: string
-}
-
-interface iPaymentMethod {
-  code: string
-  name: string
-  category: {
-    code: string
-    name: string
-  }
-}
-
-interface iGetPaymentMethodsResponse {
-  time: number // In milisecond
-  status_code: number
-  status_message: string
-  result: Array<iPaymentMethod>
-}
 
 export default class PaymentGateway {
   public client_id: string
@@ -78,5 +47,66 @@ export default class PaymentGateway {
     return jsonResponse.result
   }
 
-  public requestPayment() {}
+  public async requestPayment({
+    orderDetail,
+    userDetail,
+    paymentMethod,
+  }: {
+    orderDetail: iYukkOrderDetail
+    userDetail: iYukkCustomer
+    paymentMethod: string
+  }) {
+    const payload: iYukkRequestPaymentPayload = {
+      request_time: Date.now() / 1000,
+      payment: {
+        pmt_channel_code: paymentMethod,
+      },
+      order_details: orderDetail,
+      customer: userDetail,
+      session_timeout: 86700,
+      notification_url: 'https://monkfish-app-jc37p.ondigitalocean.app/api/webhook/payment-gateway',
+      callback_url: 'kamalan.id',
+    }
+
+    const res = await fetch(`${this.base_url}/api/transactions/request-payment`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Authorization': `Bearer ${this.pg_access_token}`,
+        'MID': this.merchant_id,
+        'User-device': 'DESKTOP',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+
+    const resJson = (await res.json()) as iYukkRequestPaymentResponse
+
+    if (resJson.status_code > 299) {
+      throw new Exception(resJson.status_message, resJson.status_code)
+    }
+
+    return resJson.result
+  }
+
+  public async checkPaymentStatus(order_id: string) {
+    const res = await fetch(`${this.base_url}/api/transactions/${order_id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${this.pg_access_token}`,
+        'MID': this.merchant_id,
+        'User-device': 'DESKTOP',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+
+    const resJson = (await res.json()) as iYukkCheckPaymentStatusResponse
+
+    if (resJson.status_code > 299) {
+      throw new Exception(resJson.status_message, resJson.status_code)
+    }
+
+    return resJson.result
+  }
 }

@@ -51,14 +51,11 @@ export default class extends BaseSeeder {
     await Database.transaction(
       async (trx) => {
         for await (const province of await this.fetchProvince()) {
-          console.log(province)
           await Province.create(province, { client: trx })
           for await (const city of await this.fetchCity(province.id)) {
             await City.create(city, { client: trx })
-            console.log(city)
             for await (const subdistrict of await this.fetchSubdistrict(city.id)) {
               await Subdistrict.create(subdistrict, { client: trx })
-              console.log(subdistrict)
             }
           }
         }

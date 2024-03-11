@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, beforeCreate, column } from '@ioc:Adonis/Lucid/Orm'
 import { idGenerator } from 'App/Utils/id/generator'
 
-export default class OrderStatus extends BaseModel {
+export default class OrderPaymentMethod extends BaseModel {
   @column({ isPrimary: true })
   public id: string
 
@@ -10,11 +10,11 @@ export default class OrderStatus extends BaseModel {
   public order_id: string
 
   @column()
-  public status: string
+  public payment_method: string
 
   @beforeCreate()
-  public static async generateId(orderStatus: OrderStatus) {
-    orderStatus.id = idGenerator('orderStatus')
+  public static async generateId(orderPaymentMethod: OrderPaymentMethod) {
+    orderPaymentMethod.id = idGenerator('orderStatus')
   }
 
   @column.dateTime({ autoCreate: true })
