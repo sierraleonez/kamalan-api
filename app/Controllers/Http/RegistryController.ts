@@ -22,14 +22,19 @@ export default class RegistryController {
     const registry = await Registry.findOrFail(id)
 
     isAuthorizedForResource(ctx, registry.user_id)
+
     await registry.load('event')
     await registry.load('design')
+    await registry.load('product_variation')
+    registry.product_variation.map(async (t) => {
+      await t.load('product')
+    })
+
+    await registry.load('user')
 
     return {
       message: 'registry retrieved',
-      data: {
-        registry,
-      },
+      data: registry,
     }
   }
 

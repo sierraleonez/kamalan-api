@@ -1,11 +1,17 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
 
 export default class UserController {
   public async create({ request }: HttpContextContract) {
-    const email = request.input('email')
-    const password = request.input('password')
-    const name = request.input('name')
+    const validatorSchema = schema.create({
+      email: schema.string([rules.required(), rules.email()]),
+      password: schema.string([rules.required()]),
+      name: schema.string([rules.required()]),
+      // phone_number: schema.number.optional(),
+    })
+
+    const { email, password, name } = await request.validate({ schema: validatorSchema })
 
     const user = await User.create({
       name,
@@ -24,15 +30,16 @@ export default class UserController {
   public async login({ auth, request }: HttpContextContract) {
     const email = request.input('email')
     const password = request.input('password')
-    await auth.use('web').attempt(email, password)
+    const token = await auth.use('api').attempt(email, password)
 
     return {
       message: 'login success',
+      data: token,
     }
   }
 
   public async logout({ auth }: HttpContextContract) {
-    await auth.use('web').logout()
+    await auth.use('api').logout()
     return {
       message: 'logout success',
     }

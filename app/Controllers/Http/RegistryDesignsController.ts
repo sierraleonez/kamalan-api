@@ -9,9 +9,7 @@ export default class RegistryDesignsController {
     const registryDesigns = await RegistryDesign.all()
     return {
       message: 'registry designs retrieved',
-      data: {
-        registryDesigns,
-      },
+      data: registryDesigns,
     }
   }
 
@@ -21,9 +19,7 @@ export default class RegistryDesignsController {
     const registryDesign = await RegistryDesign.findOrFail(id)
     return {
       message: 'registry design retrieved',
-      data: {
-        registryDesign,
-      },
+      data: registryDesign,
     }
   }
 

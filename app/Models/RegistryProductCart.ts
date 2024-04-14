@@ -39,6 +39,7 @@ export default class RegistryProductCart extends BaseModel {
       .where('registry_id', cart.registry_id)
       .andWhere('product_variation_id', cart.product_variation_id)
       .first()
+    console.log(existedItemCart)
     if (existedItemCart) {
       throw new Exception('cart item already existed, please use update instead', 422)
     }
@@ -51,8 +52,8 @@ export default class RegistryProductCart extends BaseModel {
 
   @beforeCreate()
   public static async checkStockAvailability(cart: RegistryProductCart) {
-    await cart.load('product_variation')
-    const productQty = cart.product_variation.qty
+    const productVariation = await ProductVariation.findOrFail(cart.product_variation_id)
+    const productQty = productVariation?.qty
 
     if (productQty < cart.current_qty) {
       throw new Exception('product qty exceeds available stocks', 400)

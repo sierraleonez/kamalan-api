@@ -2,10 +2,12 @@ import { DateTime } from 'luxon'
 import {
   BaseModel,
   HasMany,
+  HasManyThrough,
   HasOne,
   beforeCreate,
   column,
   hasMany,
+  hasManyThrough,
   hasOne,
 } from '@ioc:Adonis/Lucid/Orm'
 import RegistryDesign from 'App/Models/RegistryDesign'
@@ -13,6 +15,7 @@ import User from 'App/Models/User'
 import Event from 'App/Models/Event'
 import RegistryProductCart from './RegistryProductCart'
 import { idGenerator } from 'App/Utils/id/generator'
+import ProductVariation from './ProductVariation'
 
 export default class Registry extends BaseModel {
   @column({ isPrimary: true })
@@ -72,6 +75,13 @@ export default class Registry extends BaseModel {
   public static async generateId(registry: Registry) {
     registry.id = idGenerator('registry')
   }
+
+  @hasManyThrough([() => ProductVariation, () => RegistryProductCart], {
+    foreignKey: 'registry_id',
+    throughLocalKey: 'product_variation_id',
+    throughForeignKey: 'id',
+  })
+  public product_variation: HasManyThrough<typeof ProductVariation>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

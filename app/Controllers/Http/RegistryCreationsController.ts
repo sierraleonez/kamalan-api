@@ -79,7 +79,6 @@ export default class RegistryCreationsController {
       phone_number: schema.string([rules.required()]),
       province: schema.string([rules.required()]),
       city: schema.string([rules.required()]),
-      district: schema.string([rules.required()]),
       subdistrict: schema.string([rules.required()]),
       postal_code: schema.number([rules.required()]),
       detail_address: schema.string([rules.required()]),
@@ -97,7 +96,6 @@ export default class RegistryCreationsController {
       province,
       name,
       detail_address,
-      district,
       subdistrict,
       phone_number,
       postal_code,
@@ -121,7 +119,6 @@ export default class RegistryCreationsController {
             province,
             name,
             detail_address,
-            district,
             subdistrict,
             phone_number,
             postal_code,
@@ -159,7 +156,7 @@ export default class RegistryCreationsController {
       { isolationLevel: 'read uncommitted' }
     )
     return {
-      message: 'step 3 fininshed',
+      message: 'step 3 finished',
     }
   }
 
@@ -171,11 +168,31 @@ export default class RegistryCreationsController {
 
     isAuthorizedForResource(ctx, registry.user_id)
 
-    await registry.load('cart')
+    const res = await Database.from('registry_product_carts')
+      .where('registry_id', registry_id)
+      .join(
+        'product_variations',
+        'registry_product_carts.product_variation_id',
+        '=',
+        'product_variations.id'
+      )
+      .join('products', 'product_variations.product_id', '=', 'products.id')
+      .select('registry_product_carts.*')
+      .select(
+        'product_variations.id as product_variation_id',
+        'product_variations.qty as stock_qty'
+      )
+      .select('products.thumbnail_url', 'products.id as product_id', 'products.name')
+      .orderBy('created_at', 'desc')
+
+    // await registry.load('cart')
+    // for await (const cart of registry.cart) {
+    //   await cart.load('product_variation')
+    // }
 
     return {
       message: 'registry cart items retrieved',
-      data: registry.cart,
+      data: res,
     }
   }
 
@@ -224,7 +241,7 @@ export default class RegistryCreationsController {
 
     isAuthorizedForResource(ctx, cartItem.registry.user_id)
 
-    await cartItem.merge({ initial_qty: payload.qty }).save()
+    await cartItem.merge({ current_qty: payload.qty }).save()
 
     return {
       message: 'registry product cart updated',

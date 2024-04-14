@@ -3,15 +3,18 @@ import {
   BaseModel,
   HasMany,
   HasManyThrough,
+  HasOne,
   afterCreate,
   beforeCreate,
   column,
   hasMany,
   hasManyThrough,
+  hasOne,
 } from '@ioc:Adonis/Lucid/Orm'
 import ProductVariation from 'App/Models/ProductVariation'
 import ProductVariationImage from './ProductVariationImage'
 import { idGenerator } from 'App/Utils/id/generator'
+import Brand from './Brand'
 
 export default class Product extends BaseModel {
   @column({ isPrimary: true })
@@ -29,6 +32,9 @@ export default class Product extends BaseModel {
   @column()
   public description: string
 
+  @column()
+  public default_price: number
+
   @hasMany(() => ProductVariation, { foreignKey: 'product_id', localKey: 'id' })
   public productVariations: HasMany<typeof ProductVariation>
 
@@ -37,6 +43,9 @@ export default class Product extends BaseModel {
     throughForeignKey: 'product_variation_id',
   })
   public images: HasManyThrough<typeof ProductVariationImage>
+
+  @hasOne(() => Brand, { foreignKey: 'id', localKey: 'brand_id' })
+  public brand: HasOne<typeof Brand>
 
   @afterCreate()
   public static async insertDefaultProductVariation(product: Product) {

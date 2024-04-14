@@ -3,13 +3,47 @@ import { CloudStorageInstance, NewFile } from 'App/Infra/cloud-storage'
 import Product from 'App/Models/Product'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import { IMAGE_FILE_EXTENSION } from 'App/type/constant'
+import Database from '@ioc:Adonis/Lucid/Database'
 
+interface iProductListResponse {
+  id: string
+  name: string
+  thumbnail_url: string
+  description: string
+  brand_id: string
+  created_at: string
+  updated_at: string
+  default_price: number
+  location: string
+  brand_name: string
+}
 export default class ProductsController {
-  public async index() {
-    const products = await Product.all()
+  public async index({ request }: HttpContextContract) {
+    const page = request.input('page') || 1
+    const eventId = request.input('event_id')
+
+    const limit = 10
+    let result: Array<iProductListResponse>
+
+    if (eventId) {
+      result = await Database.from('event_products')
+        .where('event_id', eventId)
+        .join('products', 'event_products.product_id', '=', 'products.id')
+        .join('brands', 'products.brand_id', '=', 'brands.id')
+        .select('products.*')
+        .select('brands.location', 'brands.name as brand_name')
+        .paginate(page, limit)
+    } else {
+      result = await Database.from('products')
+        .join('brands', 'products.brand_id', '=', 'brands.id')
+        .select('products.*')
+        .select('brands.location', 'brands.name as brand_name')
+        .paginate(page, limit)
+    }
+
     return {
       message: 'products retrieved',
-      data: products,
+      data: result,
     }
   }
 
@@ -18,6 +52,7 @@ export default class ProductsController {
     const product = await Product.findOrFail(id)
     await product.load('images')
     await product.load('productVariations')
+    await product.load('brand')
 
     return {
       message: 'product retrieved',

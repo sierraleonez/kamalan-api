@@ -64,6 +64,7 @@ export default class ProductVariationsController {
 
     return {
       message: 'product variation updated',
+      data: existingProductVariation,
     }
   }
 
