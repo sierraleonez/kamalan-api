@@ -16,6 +16,7 @@ import Event from 'App/Models/Event'
 import RegistryProductCart from './RegistryProductCart'
 import { idGenerator } from 'App/Utils/id/generator'
 import ProductVariation from './ProductVariation'
+import RegistryDeliveryDatum from './RegistryDeliveryDatum'
 
 export default class Registry extends BaseModel {
   @column({ isPrimary: true })
@@ -65,6 +66,11 @@ export default class Registry extends BaseModel {
     foreignKey: 'id',
   })
   public event: HasOne<typeof Event>
+
+  @hasOne(() => RegistryDeliveryDatum, {
+    foreignKey: 'registry_id',
+  })
+  public deliveryAddress: HasOne<typeof RegistryDeliveryDatum>
 
   @hasMany(() => RegistryProductCart, {
     foreignKey: 'registry_id',

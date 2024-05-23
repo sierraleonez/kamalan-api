@@ -2,6 +2,7 @@ import { Exception } from '@adonisjs/core/build/standalone'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
+import Schema from '@ioc:Adonis/Lucid/Schema'
 import RajaOngkirDeliveryGateway from '@ioc:DeliveryGateway/RajaOngkir'
 import YukkPaymentGateway from '@ioc:PaymentGateway/yukk'
 import Brand from 'App/Models/Brand'
@@ -14,6 +15,7 @@ import ProductVariation from 'App/Models/ProductVariation'
 import Registry from 'App/Models/Registry'
 import RegistryDeliveryDatum from 'App/Models/RegistryDeliveryDatum'
 import User from 'App/Models/User'
+import DeliveryGateway from 'App/Services/DeliveryGateway'
 import isAuthorizedForResource from 'App/Utils/auth/resourceAuth'
 
 export default class OrdersController {
@@ -97,9 +99,6 @@ export default class OrdersController {
     }
 
     total = totalProductPrice + totalShipmentCost
-    console.log(orderDeliveries, productCart)
-
-    console.log(totalShipmentCost, totalProductPrice, total)
 
     await Database.transaction(
       async (trx) => {
@@ -210,7 +209,6 @@ export default class OrdersController {
 
   public async webhookPaymentHandler({ request }: HttpContextContract) {
     const body = request.body() as iYukkWebhookResponse
-    console.log(request.header('Signature'))
     const order = await OrderStatus.findOrFail(body.order_id)
     let status: string
     switch (body.status) {
@@ -222,5 +220,57 @@ export default class OrdersController {
     }
 
     await order.merge({ status }).save()
+  }
+
+  // public async calculateFinalPrice({ request }: HttpContextContract) {
+  //   const validationSchema = schema.create({
+  //     cart: schema.array().members(
+  //       schema.object().members({
+  //         products: schema.array().members(
+  //           schema.object().members({
+  //             product_id: schema.string([rules.required()]),
+  //             qty: schema.number([rules.required()]),
+  //           })
+  //         ),
+  //         delivery_method_id: schema.string([rules.required()]),
+  //         service_type: schema.string([rules.required()]),
+  //         sender_subdistrict_id: schema.string([rules.required()])
+  //       })
+  //     ),
+  //     destination_subdistrict_id: schema.string([rules.required])
+  //   })
+
+  //   const { cart, destination_subdistrict_id } = await request.validate({ schema: validationSchema })
+  //   const deliveryGateway = await RajaOngkirDeliveryGateway
+  //   for await (const c of cart) {
+  //     deliveryGateway.calculateCost({
+  //       destination: destination_subdistrict_id,
+  //       origin: c.sender_subdistrict_id,
+  //       weight: '1700',
+  //       courier: c.delivery_method_id
+  //     })
+  //   }
+  // }
+  public async getShipmentOptions({ request }: HttpContextContract) {
+    const validationSchema = schema.create({
+      destination_subdistrict_id: schema.string([rules.required()]),
+      origin_subdistrict_id: schema.string([rules.required()]),
+      product_variation_id: schema.string([rules.required()]),
+    })
+
+    const { destination_subdistrict_id, origin_subdistrict_id, product_variation_id } =
+      await request.validate({ schema: validationSchema })
+
+    const deliveryGateway = await RajaOngkirDeliveryGateway
+    const deliveryApiResponse = await deliveryGateway.calculateCost({
+      destination: destination_subdistrict_id,
+      origin: origin_subdistrict_id,
+      weight: '1000',
+    })
+
+    return {
+      message: 'Shipment options retrieved',
+      data: deliveryApiResponse,
+    }
   }
 }

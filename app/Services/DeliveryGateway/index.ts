@@ -26,7 +26,6 @@ export default class DeliveryGateway {
       },
     })
     const resJson = (await res.json()) as iCalculateCostResponse
-    console.log(resJson)
     return resJson.rajaongkir.results
   }
 }

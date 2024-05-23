@@ -190,4 +190,9 @@ Route.group(() => {
     Route.get('/subdistrict', 'MastersController.subdistrictIndex')
     Route.get('/subdistrict/:id', 'MastersController.showSubdistrict')
   }).prefix('master')
+
+  Route.group(() => {
+    Route.get('/registry-detail/:id', 'RegistryController.showPublicRegistry')
+    Route.get('/shipment-options', 'OrdersController.getShipmentOptions')
+  }).prefix('public')
 }).prefix('api')

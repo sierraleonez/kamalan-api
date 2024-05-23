@@ -1,5 +1,5 @@
+import { Exception } from '@adonisjs/core/build/standalone'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import YukkPaymentGateway from '@ioc:PaymentGateway/yukk'
 import Registry from 'App/Models/Registry'
 import isAuthorizedForResource from 'App/Utils/auth/resourceAuth'
 import RegistryValidator from 'App/Validators/RegistryValidator'
@@ -26,9 +26,9 @@ export default class RegistryController {
     await registry.load('event')
     await registry.load('design')
     await registry.load('product_variation')
-    registry.product_variation.map(async (t) => {
-      await t.load('product')
-    })
+    for await (const product of registry.product_variation) {
+      await product.load('product')
+    }
 
     await registry.load('user')
 
@@ -112,14 +112,28 @@ export default class RegistryController {
     }
   }
 
-  public async makePayment() {
-    const pg = await YukkPaymentGateway
+  public async showPublicRegistry(ctx: HttpContextContract) {
+    const { params } = ctx
+    const id = params.id
 
-    const paymentMethods = await pg.getPaymentMethods()
+    const registry = await Registry.findOrFail(id)
 
-    return {
-      status: 'success',
-      data: paymentMethods,
+    if (registry.is_private) {
+      throw new Exception('Not public resource', 401)
+    } else {
+      await registry.load('product_variation')
+      await registry.load('deliveryAddress')
+
+      for await (const variation of registry.product_variation) {
+        await variation.load('product')
+        await variation.load('productVariationImages')
+        await variation.product.load('brand')
+      }
+
+      return {
+        message: 'Registry loaded',
+        data: registry,
+      }
     }
   }
 }

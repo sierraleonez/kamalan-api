@@ -90,7 +90,6 @@ export default class RegistryCreationsController {
     const registry = await Registry.findOrFail(payload.registry_id)
 
     isAuthorizedForResource(ctx, registry.user_id)
-
     const {
       city,
       province,
@@ -107,9 +106,10 @@ export default class RegistryCreationsController {
       registry_name,
       user_asset,
     } = payload
+    console.log('is private', is_private)
 
     const asset = new NewFile(user_asset.tmpPath || '', user_asset.extname || '')
-    const user_asset_url = await CloudStorageInstance.upload('kamalan-registry-image', asset)
+    // const user_asset_url = await CloudStorageInstance.upload('kamalan-registry-image', asset)
 
     await Database.transaction(
       async (trx) => {
@@ -147,7 +147,7 @@ export default class RegistryCreationsController {
             is_published,
             message,
             name: registry_name,
-            user_asset_url,
+            user_asset_url: '',
           })
           .save()
 
